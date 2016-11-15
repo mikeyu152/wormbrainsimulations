@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from structures import NeuronNetwork
+import random
 
 #########################################################################################
 # ------ EXAMPLE 1 ---------
@@ -45,20 +46,22 @@ def threshold_normal(mean = 6.0, std = 3.0):
 # Change decay of neuron activation across time steps (default is 0.0, i.e. each 
 # activation only lasts one time step)
 #########################################################################################
-def activation_decay(decay = 0.5):
+def activation_decay(threshold = 10, decay = 0.5):
 	nn = NeuronNetwork(neuron_filename="neurons.txt", landmark_filename="landmark.txt")
 	# Iterate through each neuron and increase its threshold, set decay
 	for neuron in nn.neurons.values():
-		neuron.threshold = 10.0
+		neuron.threshold = threshold*1.0
 		neuron.ts_decay = decay
 	for n_id in nose_sensors:
 		nn.neurons[n_id].activated = True
 	nn.propogate(20, draw = False)
 
-for i in range(4):
-	decay =  .5*i
-	print "decay,", decay
-	activation_decay(decay)
+# for i in range(10):
+# 	for j in range(10,20):
+# 		decay =  .5*i
+# 		threshold = j
+# 		print "decay,", decay, "threshold,", threshold
+# 		activation_decay(threshold, decay)
 
 #########################################################################################
 # ------ EXAMPLE 4 ---------
@@ -77,3 +80,18 @@ def repeated_stimulation(num_steps, draw=False):
 		if draw: nn.body.draw()
 
 # repeated_stimulation(20, draw = True)
+
+def simulate_dropout(p=0.1):
+	nn = NeuronNetwork(neuron_filename="neurons.txt", landmark_filename="landmark.txt")
+	for n_id in nose_sensors:
+		nn.neurons[n_id].activated = True
+	for neuron in nn.neurons.values():
+		if random.random() < p:
+			# make it impossible for this neuron to activate by setting high threshold
+			neuron.threshold = 10000
+	nn.propogate(20, draw=True)
+
+for p in range(10):
+	prob = .1 * p
+	print "prob,", prob
+	simulate_dropout(prob)
