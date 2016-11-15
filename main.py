@@ -23,7 +23,7 @@ def simple_visualize():
 		nn.neurons[n_id].activated = True
 	nn.propogate(20, draw = True)
 
-#simple_visualize()
+# simple_visualize()
 
 #########################################################################################
 # ------ EXAMPLE 2 ---------
@@ -38,7 +38,7 @@ def threshold_normal(mean = 6.0, std = 3.0):
 		nn.neurons[n_id].activated = True
 	nn.propogate(10, draw = True)
 
-#threshold_normal()
+# threshold_normal()
 
 #########################################################################################
 # ------ EXAMPLE 3 ---------
@@ -50,12 +50,15 @@ def activation_decay(decay = 0.5):
 	# Iterate through each neuron and increase its threshold, set decay
 	for neuron in nn.neurons.values():
 		neuron.threshold = 10.0
-		neuron.ts_decay = 0.5
+		neuron.ts_decay = decay
 	for n_id in nose_sensors:
 		nn.neurons[n_id].activated = True
-	nn.propogate(20, draw = True)
+	nn.propogate(20, draw = False)
 
-# activation_decay()
+for i in range(4):
+	decay =  .5*i
+	print "decay,", decay
+	activation_decay(decay)
 
 #########################################################################################
 # ------ EXAMPLE 4 ---------
@@ -73,4 +76,4 @@ def repeated_stimulation(num_steps, draw=False):
 			if n.activated: nn.body.activate_landmark(n.id)
 		if draw: nn.body.draw()
 
-repeated_stimulation(20, draw = True)
+# repeated_stimulation(20, draw = True)
