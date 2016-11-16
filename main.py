@@ -81,7 +81,7 @@ def repeated_stimulation(num_steps, draw=False):
 
 # repeated_stimulation(20, draw = True)
 
-def simulate_dropout(p=0.1):
+def simulate_dropout(threshold=5,p=0.1):
 	nn = NeuronNetwork(neuron_filename="neurons.txt", landmark_filename="landmark.txt")
 	for n_id in nose_sensors:
 		nn.neurons[n_id].activated = True
@@ -89,9 +89,12 @@ def simulate_dropout(p=0.1):
 		if random.random() < p:
 			# make it impossible for this neuron to activate by setting high threshold
 			neuron.threshold = 10000
-	nn.propogate(20, draw=True)
+		else:
+			neuron.threshold = threshold
+	nn.propogate(20, draw=False, showActivations=True)
 
 for p in range(10):
-	prob = .1 * p
-	print "prob,", prob
-	simulate_dropout(prob)
+	for i in range(100):
+		prob = .03 * p
+		print "prob,", prob
+		simulate_dropout(threshold=10,p=prob)

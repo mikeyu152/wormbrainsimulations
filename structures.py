@@ -84,14 +84,19 @@ class NeuronNetwork:
 					self.neurons[n2_id].stimulate(self.edges[neuron.id][n2_id].weight)
 		for neuron in self.neurons.values(): neuron.tick()
 
-	def propogate(self, num_steps, draw=False):
+	def propogate(self, num_steps, draw=False, showActivations=False):
 		for _ in range(num_steps):
 			self.body.init_landmarks()
 			self.step_propogate()
-			print sum([1 for neuron in self.neurons.values() if neuron.activated]), " neurons activated."
+			# print sum([1 for neuron in self.neurons.values() if neuron.activated]), " neurons activated."
 			for neuron in self.neurons.values():
 				if neuron.activated: self.body.activate_landmark(neuron.id)
 			if draw: self.body.draw()
+		if showActivations:
+			activated = []
+			for neuron in self.neurons.values():
+				if neuron.activated: activated.append(neuron.id)
+			print activated
 
 class Firing:
 	def __init__(self, landmark = "N/A", position = 0.0, weight = 0.0):
