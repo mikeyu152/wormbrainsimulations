@@ -93,8 +93,18 @@ def simulate_dropout(threshold=5,p=0.1):
 			neuron.threshold = threshold
 	nn.propogate(20, draw=False, showActivations=True)
 
-for p in range(10):
-	for i in range(100):
-		prob = .03 * p
-		print "prob,", prob
-		simulate_dropout(threshold=10,p=prob)
+# for p in range(10):
+# 	for i in range(100):
+# 		prob = .03 * p
+# 		print "prob,", prob
+# 		simulate_dropout(threshold=10,p=prob)
+
+def simulate_noise(threshold=5,alpha=.05):
+	nn = NeuronNetwork(neuron_filename="neurons.txt", landmark_filename="landmark.txt")
+	for n_id in nose_sensors:
+		nn.neurons[n_id].activated = True
+	for neuron in nn.neurons.values():
+		neuron.threshold = threshold
+	nn.propogate(20, draw=False, showActivations=True, noise=alpha)
+
+simulate_noise(alpha=.5)	

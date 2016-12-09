@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 ELEGANS_BODY_WIDTH = 0.25
 ELEGANS_BODY_HEIGHT = 3.0
@@ -25,14 +26,19 @@ class Neuron:
 		self.threshold = threshold
 		self.activated = activated
 		self.ts_decay = ts_decay
+		self.freeze = False
 
-	def tick(self):
+	def tick(self,noise=0):
 		# Shift the neuron to its next time state
 		self.activation = self.future_activation
 
 		# If the state is now "active"
-		if self.activated or self.activation >= self.threshold:
+		if not self.freeze and (self.activated or self.activation >= self.threshold):
 			self.activated = True
+
+		if random.random() < noise:
+			self.activated = not self.activated
+			self.freeze = True
 
 		# Set the future activation to be a copy of the current starting activation,
 		# decay the activation accordingly
@@ -50,6 +56,12 @@ class NeuronNetwork:
 		if neuron_filename == None: self.edges = edges
 		else: self.edges = self.read_neuron_file(neuron_filename)
 		self.neuron_ids = self.edges.keys()
+		for n_id in self.neuron_ids:
+			neighbors = self.edges[n_id]
+			for n2_id in neighbors:
+				if n2_id not in self.neuron_ids:
+					self.neuron_ids.append(n2_id)
+					self.edges[n2_id] = []
 		self.neurons = self.create_neuron_dict()
 		self.body = EleganRobot(filename=landmark_filename)
 
@@ -73,7 +85,7 @@ class NeuronNetwork:
 			neurons[n_id] = Neuron(n_id)
 		return neurons
 
-	def step_propogate(self):
+	def step_propogate(self,noise=0):
 		# Move all neurons one time step forward, reset all that have reached their
 		# time limit active
 		for neuron in self.neurons.values():
@@ -82,12 +94,12 @@ class NeuronNetwork:
 				for n2_id in neighbors:
 					# Propogate weighted signal to each neighbor
 					self.neurons[n2_id].stimulate(self.edges[neuron.id][n2_id].weight)
-		for neuron in self.neurons.values(): neuron.tick()
+		for neuron in self.neurons.values(): neuron.tick(noise)
 
-	def propogate(self, num_steps, draw=False, showActivations=False):
+	def propogate(self, num_steps, draw=False, showActivations=False, noise=0):
 		for _ in range(num_steps):
 			self.body.init_landmarks()
-			self.step_propogate()
+			self.step_propogate(noise)
 			# print sum([1 for neuron in self.neurons.values() if neuron.activated]), " neurons activated."
 			for neuron in self.neurons.values():
 				if neuron.activated: self.body.activate_landmark(neuron.id)
