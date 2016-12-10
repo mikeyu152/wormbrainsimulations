@@ -108,7 +108,7 @@ class NeuronNetwork:
 			activated = []
 			for neuron in self.neurons.values():
 				if neuron.activated: activated.append(neuron.id)
-			print activated
+			return activated
 
 class Firing:
 	def __init__(self, landmark = "N/A", position = 0.0, weight = 0.0):

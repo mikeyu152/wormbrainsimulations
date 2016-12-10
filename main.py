@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from structures import NeuronNetwork
 import random
+import csv
 
 #########################################################################################
 # ------ EXAMPLE 1 ---------
@@ -105,6 +106,24 @@ def simulate_noise(threshold=5,alpha=.05):
 		nn.neurons[n_id].activated = True
 	for neuron in nn.neurons.values():
 		neuron.threshold = threshold
-	nn.propogate(20, draw=False, showActivations=True, noise=alpha)
+	return nn.propogate(20, draw=False, showActivations=True, noise=alpha)
+
+def printNetwork():
+	nn = NeuronNetwork(neuron_filename="neurons.txt", landmark_filename="landmark.txt")
+	return nn.neuron_ids
+
+with open('noisesimsfrozen.csv', 'w') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(printNetwork())
+    for alpha in range(25):
+    	print alpha
+    	writer.writerow(['alpha', str(alpha)])
+    	alpha = .02*alpha
+    	for threshold in [3, 5, 10, 20]:
+    		print threshold
+    		writer.writerow(['threshold', str(threshold)])
+    		threshold = threshold * 2
+	    	for i in range(1000):
+	    		writer.writerow(simulate_noise(alpha=alpha))
 
 simulate_noise(alpha=.5)	
