@@ -38,7 +38,7 @@ class Neuron:
 
 		if random.random() < noise:
 			self.activated = not self.activated
-			self.freeze = True
+			# self.freeze = True
 
 		# Set the future activation to be a copy of the current starting activation,
 		# decay the activation accordingly

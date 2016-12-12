@@ -112,13 +112,13 @@ def printNetwork():
 	nn = NeuronNetwork(neuron_filename="neurons.txt", landmark_filename="landmark.txt")
 	return nn.neuron_ids
 
-with open('noisesimsfrozen.csv', 'w') as csvfile:
+with open('noisesimsunfrozensmaller.csv', 'w') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(printNetwork())
     for alpha in range(25):
     	print alpha
     	writer.writerow(['alpha', str(alpha)])
-    	alpha = .02*alpha
+    	alpha = .002*alpha
     	for threshold in [3, 5, 10, 20]:
     		print threshold
     		writer.writerow(['threshold', str(threshold)])
